@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Emissão de Permissão de Trabalho</title>
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='assets/styles.css')}}" >
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <div class="menu-wrapper">
+        <nav>
+            <ul>
+            <li>
+                <a href="#">Opções</a>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="btn-voltar">Voltar à tela inicial</a></li>
+                </ul>
+            </li>
+            
+            </ul>
+        </nav>
+    </div>
+    <h1>Emissão de Permissão de Trabalho</h1>
+    <form action="/save_pt" method="POST">
+
+        <input type="hidden" name="nr_pt" value="nr_pt">
+        <input type="hidden" name="nr_pt" value="{{ documento._id if documento else '' }}">
+
+        <label for="_id">
+			<span>Permissão de trabalho nº:</span>
+			<input type="number" id="_id" name="_id" value="{{ documento._id if documento else '' }}" readonly>
+		</label>
+
+        <label for="local">
+			<span>Local da permissão de trabalho:</span>
+			<input type="text" id="local" name="local" value="{{ documento.local if documento else '' }}">
+		</label>
+
+        <label for="dt_execucao">
+			<span>Data/Hora da execução:</span>
+			<input type="datetime-local" id="dt_execucao" name="dt_execucao" value="{{ documento.dt_execucao if documento else '' }}">
+		</label>
+
+        <label for="dt_conclusao">
+			<span>Data/Hora da conclusão/término:</span>
+			<input type="datetime-local" id="dt_conclusao" name="dt_conclusao" value="{{ documento.dt_conclusao if documento else '' }}">
+		</label>
+
+        <label for="dt_prorrog">
+			<span>Data/Hora da prorrogação:</span>
+			<input type="datetime-local" id="dt_prorrog" name="dt_prorrog" value="{{ documento.dt_prorrog if documento else '' }}">
+		</label>
+		
+        <label for="descr_ativ">
+			<span>Descrição da atividade:</span>
+			<input type="text" id="descr_ativ" name="descr_ativ" value="{{ documento.descr_ativ if documento else '' }}">
+		</label>
+		
+        <label for="nm_solicte">
+			<span>Solicitante da permissão de trabalho:</span>
+			<input type="text" id="nm_solicte" name="nm_solicte" value="{{ documento.nm_solicte if documento else '' }}">
+		</label>
+		
+        <label for="area_solicte">
+			<span>Área do solicitante:</span>
+			<input type="text" id="area_solicte" name="area_solicte" value="{{ documento.area_solicte if documento else '' }}">
+		</label>
+		
+        <label for="ferram_utilz">
+			<span>Ferramentas utilizadas:</span>
+			<input type="text" id="ferram_utilz" name="ferram_utilz" value="{{ documento.ferram_utilz if documento else '' }}">
+		</label>
+		
+        <label for="doc_ctrl_risc">
+			<span>Documentação para controle de riscos:</span>
+			<input type="text" id="doc_ctrl_risc" name="doc_ctrl_risc" value="{{ documento.doc_ctrl_risc if documento else '' }}">
+		</label>
+
+        <fieldset>
+            <legend>Perigos principais associados ao trabalho. Selecione o(s) pictograma(s) ao lado e descreva os apontamentos abaixo</legend>
+
+            <div class="checkbox-container">
+                <label for="chk_item1" class="checkbox-label">
+                    <input type="checkbox" id="chk_item1" name="chk_item1" {% if documento.chk_item1 %}checked="checked"{% endif %} value="true">
+					Queda de material ou trabalho em altura
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item2" class="checkbox-label">
+						<input type="checkbox" id="chk_item2" name="chk_item2" {% if documento.chk_item2 %}checked="checked"{% endif %} value="true">
+						Movimentação de veículos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item3" class="checkbox-label">
+						<input type="checkbox" id="chk_item3" name="chk_item3" {% if documento.chk_item3 %}checked="checked"{% endif %} value="true">
+						Fogo ou explosivos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item4" class="checkbox-label">
+						<input type="checkbox" id="chk_item4" name="chk_item4" {% if documento.chk_item4 %}checked="checked"{% endif %} value="true">
+						Atmosfera explosiva
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item5" class="checkbox-label">
+						<input type="checkbox" id="chk_item5" name="chk_item5" {% if documento.chk_item5 %}checked="checked"{% endif %} value="true">
+						Oxidantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item6" class="checkbox-label">
+						<input type="checkbox" id="chk_item6" name="chk_item6" {% if documento.chk_item6 %}checked="checked"{% endif %} value="true">
+						Tóxicos ou infectantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item7" class="checkbox-label">
+						<input type="checkbox" id="chk_item7" name="chk_item7" {% if documento.chk_item7 %}checked="checked"{% endif %} value="true">
+						Corrosivos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item8" class="checkbox-label">
+						<input type="checkbox" id="chk_item8" name="chk_item8" {% if documento.chk_item8 %}checked="checked"{% endif %} value="true">
+						Energias perigosas
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item9" class="checkbox-label">
+						<input type="checkbox" id="chk_item9" name="chk_item9" {% if documento.chk_item9 %}checked="checked"{% endif %} value="true">
+						Asfixiantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item10" class="checkbox-label">
+						<input type="checkbox" id="chk_item10" name="chk_item10" {% if documento.chk_item10 %}checked="checked"{% endif %} value="true">
+						Espaços confinado
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item11" class="checkbox-label">
+						<input type="checkbox" id="chk_item11" name="chk_item11" {% if documento.chk_item11 %}checked="checked"{% endif %} value="true">
+						Içamento de cargas
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item12" class="checkbox-label">
+						<input type="checkbox" id="chk_item12" name="chk_item12" {% if documento.chk_item12 %}checked="checked"{% endif %} value="true">
+						Escavação / perfuração / riscos estruturais
+					</label>
+            </div>
+
+            <label for="apontamento">Apontamentos:</label>
+            <input type="text" id="apontamento" name="apontamento"><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Preparação geral e medidas de segurança (selecione caso aplicável)</legend>
+
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Forma de Controle</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item13" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item13" name="chk_item13" {% if documento.chk_item13 %}checked="checked"{% endif %} value="true">
+									Avaliação de impacto de atividades simultâneas
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_13" name="form_ctrl_13" value="{{ documento.form_ctrl_13 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item14" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item14" name="chk_item14" {% if documento.chk_item14 %}checked="checked"{% endif %} value="true">
+									Isolamento da área
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_14" name="form_ctrl_14" value="{{ documento.form_ctrl_14 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="checkbox-cell">
+                        <div class="checkbox-container">
+                            <label for="chk_item15" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item15" name="chk_item15" {% if documento.chk_item15 %}checked="checked"{% endif %} value="true">
+									Isolamento dos dispositivos de segurança contra incêndio (detectores, alarmes, botoeiras, extintores, hidrantes)
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_15" name="form_ctrl_15" value="{{ documento.form_ctrl_15 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item16" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item16" name="chk_item16" {% if documento.chk_item16 %}checked="checked"{% endif %} value="true">
+									Preparação do equipamento (drenagem, purga)
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_16" name="form_ctrl_16" value="{{ documento.form_ctrl_16 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item17" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item17" name="chk_item17" {% if documento.chk_item17 %}checked="checked"{% endif %} value="true">
+									Remoção de materiais não essenciais para o trabalho
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_17" name="form_ctrl_17" value="{{ documento.form_ctrl_17 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item18" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item18" name="chk_item18" {% if documento.chk_item18 %}checked="checked"{% endif %} value="true">
+									Requerimentos de supervisão em caso de trabalho realizado por um trabalhador
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_18" name="form_ctrl_18" value="{{ documento.form_ctrl_18 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item19" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item19" name="chk_item19" {% if documento.chk_item19 %}checked="checked"{% endif %} value="true">
+									Requerimentos de emergência
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_19" name="form_ctrl_19" value="{{ documento.form_ctrl_19 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <div class="textbox">
+                            <label for="med_adic_ctrl">Medidas adicionais de controle:</label>
+                            <input type="text" id="med_adic_ctrl" name="med_adic_ctrl" value="{{ documento.med_adic_ctrl if documento else '' }}"><br><br>
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+
+        </fieldset>
+
+        <fieldset>
+            <legend>EPIs de uso obrigatório</legend>            
+			<table>
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_1" class="label-column">Capacete com jugular:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_1" name="epi_1" value="{{ documento.epi_1 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_2" class="label-column">Proteção facial (máscaras, respiradores e filtros):</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_2" name="epi_2" value="{{ documento.epi_2 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_3" class="label-column">Luvas:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_3" name="epi_3" value="{{ documento.epi_3 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_4" class="label-column">Uniforme / Proteção especial do corpo:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_4" name="epi_4" value="{{ documento.epi_4 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_5" class="label-column">Calçados de segurança:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_5" name="epi_5" value="{{ documento.epi_5 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="outros_epi" class="label-column">Outros:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="outros_epi" name="outros_epi" value="{{ documento.outros_epi if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+
+			</table>			
+        </fieldset>
+
+        <fieldset>
+            <legend>EPCs de uso obrigatório</legend>
+			<table>			
+				<tr class="table-row">
+					<td>
+						<div class="label-container">
+							<label for="epc_1" class="label-column">Linha de vida / Pontos de ancoragem / Sistema de resgate:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_1" name="epc_1" value="{{ documento.epc_1 if documento else '' }}">
+						</div>
+					</td>
+				</tr>				
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_2" class="label-column">Isolamento por cerquite / Guarda corpo / Tapume / Escora:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_2" name="epc_2" value="{{ documento.epc_2 if documento else '' }}">
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_3" class="label-column">Ventilação / Exaustão:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_3" name="epc_3" value="{{ documento.epc_3 if documento else '' }}">
+						</div>
+					</td>
+				</tr>				
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_4" class="label-column">LOTO:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_4" name="epc_4" value="{{ documento.epc_4 if documento else '' }}">
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_5" class="label-column">Medição quantitativa de agentes ambientais:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_5" name="epc_5" value="{{ documento.epc_5 if documento else '' }}">
+						</div>
+					</td>
+				</tr>				
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="outros_epc" class="label-column">Outros:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="outros_epc" name="outros_epc" value="{{ documento.outros_epc if documento else '' }}">
+						</div>
+					</td>
+				</tr>
+			</table>
+        </fieldset>
+
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+
+</html>

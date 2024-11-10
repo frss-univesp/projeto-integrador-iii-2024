@@ -1,0 +1,214 @@
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f2f2f2;
+}
+
+h1 {
+	color: #333;
+	text-align: center;
+}
+
+form {
+	width: 1200px;
+	margin: 0 auto;
+}
+
+label {
+	width: 200px;
+	float: left;
+	margin: 0 20px 0 0;
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+span {
+	display: block;
+	margin: 0 0 3px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+textarea {
+	width: 100%;
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+}
+
+fieldset {
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+legend {
+	font-weight: bold;
+	color: #333;
+}
+
+input[type="checkbox"] {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-size: 5px;
+}
+
+input[type="submit"] {
+	background-color: #4CAF50;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+input[type="submit"]:hover {
+	background-color: #45a049;
+}
+
+.checkbox-container {
+	display: flex;
+	align-items: center;
+}
+
+.checkbox-input {
+	margin-right: -5px;
+}
+
+.checkbox-label {
+	margin-left: 10px;
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+legend {
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+	table-layout: fixed;
+}
+
+table td label {
+	max-width: 600px;
+	display: inline-block;
+	vertical-align: middle;
+	word-break: break-word;
+}
+
+td,
+th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+td {
+	padding: 10px;
+	vertical-align: middle;
+	height: 10px;
+}
+
+th:first-child,
+td:first-child {
+	width: 40%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+	width: 60%;
+}
+
+.checkbox-cell label {
+	display: inline-block;
+	white-space: normal;
+	word-wrap: break-word;
+	vertical-align: middle;
+	width: 600px;
+}
+
+.label-column {
+	width: 30%;
+	height: 15px;
+}
+
+.input-column {
+	width: 70%;
+	height: 15px;
+}
+
+td label,
+td input[type="text"] {
+	height: 30px;
+}
+
+.menu-wrapper {
+	max-width: 100px;
+	margin: 0 left;
+  }
+  
+  nav ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	background-color: #a7d3bb;
+  }
+  
+  nav li {
+	display: inline-block;
+  }
+  
+  nav a {
+	display: block;
+	padding: 5px 10px;
+	text-decoration: none;
+	color: #333;
+  }
+  
+  nav ul ul {
+	display: none;
+	position: absolute;
+	background-color: #f2f2f2;
+	min-width: 200px;
+  }
+  
+  nav ul li:hover > ul {
+	display: inherit;
+  }
+  
+  nav ul ul li {
+	width: 100%;
+	display: list-item;
+	position: relative;
+  }
+  
+  .btn-voltar {
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	padding: 5px 10px;
+	text-decoration: none;
+	border-radius: 4px;
+	margin-right: 10px;
+  }
+  
+  .edit-button {
+	display: inline-block;
+	padding: 3px 6px;
+	background-color: rgb(211, 211, 211);
+	color: black;
+	text-decoration: none;
+	border-radius: 4px;
+  }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/assets/styles_index.css') }}">
+		<title>Lista de Itens</title>
+		<meta charset="UTF-8">
+	</head>
+	<h1>Sistema de Emissão Permissões de Trabalho (PT)</h1>
+	<body>
+		<div class="menu-wrapper">
+			<nav>
+				<ul>
+				<li>
+					<a href="#">Opções</a>
+					<ul>
+						<li><a href="{{ url_for('edit_pt') }}" class="btn-cadastrar">Emitir nova Permissão de Trabalho</a></li>
+					</ul>
+				</li>
+				
+				</ul>
+			</nav>
+		</div>
+
+	<h2>Lista de Permissões de Trabalho</h2>
+		<table class="lista-pt">
+			<thead>
+				<tr>
+					<th class="action-column"><span class="edit-button"></span></th>
+					<th>Nr da PT</th>
+					<th>Local de Execução</th>
+					<th>Data/hora de execução</th>
+					<th>Data/hora de conclusão</th>
+					<th>Nome do solicitante</th>
+					<th>Área do solicitante</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for pt in pts %}
+					<tr>
+						<td>
+							<a href="{{ url_for('edit_pt', pt=pt._id) }}" class="edit-button">Editar</a>
+						</td>				
+						<td>{{ pt._id }}</td>
+						<td>{{ pt.local }}</td>
+						<td class="date-format">{{ pt.dt_execucao }}</td>
+						<td class="date-format">{{ pt.dt_conclusao }}</td>
+						<td>{{ pt.nm_solicte }}</td>
+						<td>{{ pt.area_solicte }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</body>
+	<script src="static/assets/utils.js"></script>
+</html>
