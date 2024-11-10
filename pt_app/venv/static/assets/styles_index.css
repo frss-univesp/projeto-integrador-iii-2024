@@ -1,0 +1,114 @@
+body {
+	font-family: Arial, sans-serif;
+	background-color: #fff;
+}
+
+.lista-pt {
+	font-size: medium;
+	color: #333;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.lista-pt {
+	font-size: medium;
+	color: #333;
+	width: 100%;
+	border-collapse: collapse;
+}
+  
+.lista-pt th,
+.lista-pt td {
+  padding: 3px 6px;
+	text-align: center;
+	border: 1px solid #ddd;
+}
+  
+.lista-pt thead th {
+	background-color: #f0f0f0;
+}
+  
+.lista-pt tbody tr:nth-child(even) {
+	background-color: #f5f5f5;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+  
+.lista-pt tbody td:not(:last-child),
+.lista-pt tbody th:not(:last-child) {
+	width: 100px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+  
+.lista-pt tbody td:last-child,
+.lista-pt tbody th:last-child {
+	width: 200px;
+}
+
+.menu-wrapper {
+  max-width: 100px;
+  margin: 0 left;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #a7d3bb;
+}
+
+nav li {
+  display: inline-block;
+}
+
+nav a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #333;
+}
+
+nav ul ul {
+  display: none;
+  position: absolute;
+  background-color: #f2f2f2;
+  min-width: 200px;
+}
+
+nav ul li:hover > ul {
+  display: inherit;
+}
+
+nav ul ul li {
+  width: 100%;
+  display: list-item;
+  position: relative;
+}
+
+.btn-cadastrar {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.edit-button {
+  display: inline-block;
+  padding: 3px 6px;
+  background-color: rgb(211, 211, 211);
+  color: black;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.action-column {
+  width: 1%;
+  white-space: nowrap;
+}
