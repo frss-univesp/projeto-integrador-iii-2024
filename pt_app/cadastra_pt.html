@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Emissão de Permissão de Trabalho</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+        label {
+            width: 200px;
+            float: left;
+            margin: 0 20px 0 0;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        span {
+            display: block;
+            margin: 0 0 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        textarea {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        fieldset {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="checkbox"] {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-input {
+            margin-right: -5px;
+        }
+
+        .checkbox-label {
+            margin-left: 10px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        legend {
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        table td label {
+            max-width: 600px;
+            display: inline-block;
+            vertical-align: middle;
+            word-break: break-word;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        td {
+            padding: 10px;
+            vertical-align: middle;
+            height: 10px;
+        }
+
+        th:first-child,
+        td:first-child {
+            width: 40%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 60%;
+        }
+
+        .checkbox-cell label {
+            display: inline-block;
+            white-space: normal;
+            word-wrap: break-word;
+            vertical-align: middle;
+            width: 600px;
+        }
+		
+		.label-column {
+			width: 30%;
+			height: 15px;
+		}
+
+		.input-column {
+			width: 70%;
+			height: 15px;
+		}
+		
+		td label,
+		td input[type="text"] {
+			height: 30px;
+		}
+		
+    </style>
+</head>
+
+<body>
+    <h1>Emissão de Permissão de Trabalho</h1>
+    <form method="POST" action="/">
+
+        <label for="nr_pt">
+			<span>Permissão de trabalho nº:</span>
+			<input type="text" id="nr_pt" name="nr_pt"/>
+		</label>
+
+        <label for="local">
+			<span>Local da permissão de trabalho:</span>
+			<input type="text" id="local" name="local"/>
+		</label>
+
+        <label for="dt_execucao">
+			<span>Data/Hora da execução:</span>
+			<input type="datetime-local" id="dt_execucao" name="dt_execucao"/>
+		</label>
+
+        <label for="dt_conclusao">
+			<span>Data/Hora da conclusão/término:</span>
+			<input type="datetime-local" id="dt_conclusao" name="dt_conclusao"/>
+		</label>
+		
+        <label for="descr_ativ">
+			<span>Descrição da atividade:</span>
+			<input type="text" id="descr_ativ" name="descr_ativ"/>
+		</label>
+		
+        <label for="nm_solicte">
+			<span>Solicitante da permissão de trabalho:</span>
+			<input type="text" id="nm_solicte" name="nm_solicte"/>
+		</label>
+		
+        <label for="area_solicte">
+			<span>Área do solicitante:</span>
+			<input type="text" id="area_solicte" name="area_solicte"/>
+		</label>
+		
+        <label for="ferram_utilz">
+			<span>Ferramentas utilizadas:</span>
+			<input type="text" id="ferram_utilz" name="ferram_utilz"/>
+		</label>
+		
+        <label for="doc_ctrl_risc">
+			<span>Documentação para controle de riscos:</span>
+			<input type="text" id="doc_ctrl_risc" name="doc_ctrl_risc"/>
+		</label>
+
+        <fieldset>
+            <legend>Perigos principais associados ao trabalho. Selecione o(s) pictograma(s) ao lado e descreva os apontamentos abaixo</legend>
+
+            <div class="checkbox-container">
+                <label for="chk_item1" class="checkbox-label">
+						<input type="checkbox" id="chk_item1" name="chk_item1" value="false">
+						Queda de material ou trabalho em altura
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item2" class="checkbox-label">
+						<input type="checkbox" id="chk_item2" name="chk_item2" value="false">
+						Movimentação de veículos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item3" class="checkbox-label">
+						<input type="checkbox" id="chk_item3" name="chk_item3" value="false">
+						Fogo ou explosivos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item4" class="checkbox-label">
+						<input type="checkbox" id="chk_item4" name="chk_item4" value="false">
+						Atmosfera explosiva
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item5" class="checkbox-label">
+						<input type="checkbox" id="chk_item5" name="chk_item5" value="false">
+						Oxidantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item6" class="checkbox-label">
+						<input type="checkbox" id="chk_item6" name="chk_item6" value="false">
+						Tóxicos ou infectantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item7" class="checkbox-label">
+						<input type="checkbox" id="chk_item7" name="chk_item7" value="false">
+						Corrosivos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item8" class="checkbox-label">
+						<input type="checkbox" id="chk_item8" name="chk_item8" value="false">
+						Energias perigosas
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item9" class="checkbox-label">
+						<input type="checkbox" id="chk_item9" name="chk_item9" value="false">
+						Asfixiantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item10" class="checkbox-label">
+						<input type="checkbox" id="chk_item10" name="chk_item10" value="false">
+						Espaços confinado
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item11" class="checkbox-label">
+						<input type="checkbox" id="chk_item11" name="chk_item11" value="false">
+						Içamento de cargas
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item12" class="checkbox-label">
+						<input type="checkbox" id="chk_item12" name="chk_item12" value="false">
+						Escavação / perfuração / riscos estruturais
+					</label>
+            </div>
+
+            <label for="apontamento">Apontamentos:</label>
+            <input type="text" id="apontamento" name="apontamento"><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Preparação geral e medidas de segurança (selecione caso aplicável)</legend>
+
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Forma de Controle</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item13" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item13" name="chk_item13" value="false">
+									Avaliação de impacto de atividades simultâneas
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_13" name="form_ctrl_13">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item14" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item14" name="chk_item14" value="false">
+									Isolamento da área
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_14" name="form_ctrl_14">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="checkbox-cell">
+                        <div class="checkbox-container">
+                            <label for="chk_item15" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item15" name="chk_item15" value="false">
+									Isolamento dos dispositivos de segurança contra incêndio (detectores, alarmes, botoeiras, extintores, hidrantes)
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_15" name="form_ctrl_15">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item16" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item16" name="chk_item15" value="false">
+									Preparação do equipamento (drenagem, purga)
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_16" name="form_ctrl_16">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item17" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item17" name="chk_item17" value="false">
+									Remoção de materiais não essenciais para o trabalho
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_17" name="form_ctrl_17">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item18" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item18" name="chk_item18" value="false">
+									Requerimentos de supervisão em caso de trabalho realizado por um trabalhador
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_18" name="form_ctrl_18">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="checkbox-container">
+                            <label for="chk_item19" class="checkbox-label checkbox-table">
+									<input type="checkbox" id="chk_item19" name="chk_item19" value="false">
+									Requerimentos de emergência
+								</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="form_ctrl_19" name="form_ctrl_19">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <div class="textbox">
+                            <label for="med_adic_ctrl">Medidas adicionais de controle:</label>
+                            <input type="text" id="med_adic_ctrl" name="med_adic_ctrl"><br><br>
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+
+        </fieldset>
+
+        <fieldset>
+            <legend>EPIs de uso obrigatório</legend>            
+			<table>
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_1" class="label-column">Capacete com jugular:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_1" name="epi_1">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_2" class="label-column">Proteção facial (máscaras, respiradores e filtros):</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_2" name="epi_2">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_3" class="label-column">Luvas:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_3" name="epi_3">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_4" class="label-column">Uniforme / Proteção especial do corpo:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_4" name="epi_4">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epi_5" class="label-column">Calçados de segurança:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epi_5" name="epi_5">
+                        </div>
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="outros_epi" class="label-column">Outros:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="outros_epi" name="outros_epi">
+                        </div>
+                    </td>
+                </tr>
+
+			</table>			
+        </fieldset>
+
+        <fieldset>
+            <legend>EPCs de uso obrigatório</legend>
+			<table>			
+				<tr class="table-row">
+					<td>
+						<div class="label-container">
+							<label for="epc_1" class="label-column">Linha de vida / Pontos de ancoragem / Sistema de resgate:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_1" name="epc_1">
+						</div>
+					</td>
+				</tr>				
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_2" class="label-column">Isolamento por cerquite / Guarda corpo / Tapume / Escora:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_2" name="epc_2">
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_3" class="label-column">Ventilação / Exaustão:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_3" name="epc_3">
+						</div>
+					</td>
+				</tr>				
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_4" class="label-column">LOTO:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_4" name="epc_4">
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="epc_5" class="label-column">Medição quantitativa de agentes ambientais:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="epc_5" name="epc_5">
+						</div>
+					</td>
+				</tr>				
+				<tr>
+					<td>
+						<div class="label-container">
+							<label for="outros_epc" class="label-column">Outros:</label>
+						</div>
+					</td>
+					<td>
+						<div class="textbox">
+							<input type="text" id="outros_epc" name="outros_epc">
+						</div>
+					</td>
+				</tr>
+			</table>
+        </fieldset>
+
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+
+</html>
