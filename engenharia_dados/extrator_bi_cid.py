@@ -5,15 +5,8 @@ client = pymongo.MongoClient('mongodb+srv://pi2_writer:74ZMHoV9iSZtMrfr@cluster0
 db = client['proj_integrador_ii']
 collection = db['cid']
 
-documents = collection.find()
-all_data = []
+cursor = collection.find({}, {"_id": 0})
 
-for document in documents:
-    if 'data' in document:
-        data = document['data']
-        for entry in data:
-            entry['_id_document'] = document['_id']
-            all_data.append(entry)
-
-df = pd.DataFrame(all_data)
-df
+data = list(cursor)
+df_cid = pd.DataFrame(data)
+df_cid
