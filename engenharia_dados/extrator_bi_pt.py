@@ -46,7 +46,7 @@ def extrair_dados_mongodb(uri, db_name, collection_name):
 
     return df
 
-uri = "mongodb+srv://pi2_writer:74ZMHoV9iSZtMrfr@cluster0.tz7tehv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+uri = "mongodb+srv://secret:secret@cluster0.tz7tehv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 db_name = "proj_integrador_ii"
 collection_name = "perm_trabalho"
 
