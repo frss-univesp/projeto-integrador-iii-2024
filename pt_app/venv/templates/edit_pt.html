@@ -78,7 +78,7 @@
 		</label>
 
         <fieldset>
-            <legend>Perigos principais associados ao trabalho. Selecione o(s) pictograma(s) ao lado e descreva os apontamentos abaixo</legend>
+            <legend>Perigos principais associados ao trabalho</legend>
 
             <div class="checkbox-container">
                 <label for="chk_item1" class="checkbox-label">
@@ -167,6 +167,85 @@
             <label for="apontamento">Apontamentos:</label>
             <input type="text" id="apontamento" name="apontamento"><br><br>
         </fieldset>
+
+<!--    EDITAR A PARTIR DAQUI -->
+        <fieldset>
+            <legend>Executores designados para o trabalho</legend>
+
+
+
+
+            <h2>Certificações</h2>
+            {% if documento and documento.certificacoes %}
+            <table class="sub-table">
+                <thead>
+                    <tr>
+                        <th>Nome da Certificação</th>
+                        <th>Início da Vigência</th>
+                        <th>Fim da Vigência</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cert in documento.certificacoes %}
+                    {% if cert.id_cerficacao is defined %}
+                        <tr>
+                            <td>
+                                {{ cert.nome_cerficacao if cert else 'Certificação não encontrada' }}
+                            </td>
+                            <td>{{ cert.dt_inicio_vigencia }}</td>
+                            <td>{{ cert.dt_fim_vigencia }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Nenhuma certificação cadastrada para este executor.</p>
+            {% endif %}
+    
+            <h3>Adicionar Nova Certificação</h3>
+            <div class="add-certification">
+                <label for="id_cerficacao">ID Certificação:</label>
+                <select id="id_cerficacao" name="id_cerficacao">
+                    <option value="">Selecione a Certificação</option>
+                    {% for cert in lista_certificacoes %}
+                        <option value="{{ cert._id }}">{{ cert.nome_certificacao }}</option>
+                    {% endfor %}
+                </select><br><br>
+    
+                <label for="dt_inicio_vigencia_cert">Início da Vigência:</label>
+                <input type="datetime-local" id="dt_inicio_vigencia_cert" name="dt_inicio_vigencia_cert"><br><br>
+    
+                <label for="dt_fim_vigencia_cert">Fim da Vigência:</label>
+                <input type="datetime-local" id="dt_fim_vigencia_cert" name="dt_fim_vigencia_cert"><br><br>
+    
+                <button type="button" onclick="adicionarCertificacao()">Adicionar Certificação</button>
+            </div>
+    
+            <div id="novas_certificacoes">
+                <!-- Novas certificações serão adicionadas aqui pelo JavaScript -->
+            </div>
+    
+            <input type="hidden" id="certificacoes_json" name="certificacoes_json" value="[]">
+
+
+
+
+
+
+
+
+
+
+
+        </fieldset>
+
+
+
+
+<!--    ATÉ AQUI -->
+
+
 
         <fieldset>
             <legend>Preparação geral e medidas de segurança (selecione caso aplicável)</legend>
