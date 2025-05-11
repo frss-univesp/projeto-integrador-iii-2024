@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cadastro de certificação</title>
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='assets/styles.css')}}" >
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <div class="menu-wrapper">
+        <nav>
+            <ul>
+                <li>
+                    <a href="#">Opções</a>
+                    <ul>
+                        <li><a href="{{ url_for('list_certificacoes') }}" class="btn-voltar">Voltar à lista de certificações</a></li>
+                        <li><a href="{{ url_for('index') }}" class="btn-voltar">Voltar à tela inicial</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <h1>Cadastro de certificação</h1>
+
+    <form action="/save_certificacao" method="POST">
+
+        <label for="_id">
+			<span>ID da certificação:</span>
+			<input type="number" id="_id" name="_id" value="{{ documento._id if documento else '' }}" readonly>
+		</label>
+
+        <label for="nome_certificacao">
+			<span>Nome da certificação:</span>
+			<input type="text" id="nome_certificacao" name="nome_certificacao" value="{{ documento.nome_certificacao if documento else '' }}">
+		</label>
+
+        <label for="dt_inicio_validade">
+			<span>Início da validade:</span>
+			<input type="datetime-local" id="dt_inicio_validade" name="dt_inicio_validade" value="{{ documento.dt_inicio_validade if documento else '' }}">
+		</label>
+
+        <label for="dt_fim_validade">
+			<span>Fim da validade:</span>
+			<input type="datetime-local" id="dt_fim_validade" name="dt_fim_validade" value="{{ documento.dt_fim_validade if documento else '' }}">
+		</label>
+		
+        <label for="observacao">
+			<span>Observações:</span>
+			<input type="text" id="observacao" name="observacao" value="{{ documento.observacao if documento else '' }}">
+		</label>
+
+        <fieldset>
+            <legend>Perigos associadas à esta certificação</legend>
+
+            <div class="checkbox-container">
+                <label for="chk_item1" class="checkbox-label">
+                    <input type="checkbox" id="chk_item1" name="chk_item1" {% if documento.chk_item1 %}checked="checked"{% endif %} value="true">
+					Queda de material ou trabalho em altura
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item2" class="checkbox-label">
+						<input type="checkbox" id="chk_item2" name="chk_item2" {% if documento.chk_item2 %}checked="checked"{% endif %} value="true">
+						Movimentação de veículos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item3" class="checkbox-label">
+						<input type="checkbox" id="chk_item3" name="chk_item3" {% if documento.chk_item3 %}checked="checked"{% endif %} value="true">
+						Fogo ou explosivos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item4" class="checkbox-label">
+						<input type="checkbox" id="chk_item4" name="chk_item4" {% if documento.chk_item4 %}checked="checked"{% endif %} value="true">
+						Atmosfera explosiva
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item5" class="checkbox-label">
+						<input type="checkbox" id="chk_item5" name="chk_item5" {% if documento.chk_item5 %}checked="checked"{% endif %} value="true">
+						Oxidantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item6" class="checkbox-label">
+						<input type="checkbox" id="chk_item6" name="chk_item6" {% if documento.chk_item6 %}checked="checked"{% endif %} value="true">
+						Tóxicos ou infectantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item7" class="checkbox-label">
+						<input type="checkbox" id="chk_item7" name="chk_item7" {% if documento.chk_item7 %}checked="checked"{% endif %} value="true">
+						Corrosivos
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item8" class="checkbox-label">
+						<input type="checkbox" id="chk_item8" name="chk_item8" {% if documento.chk_item8 %}checked="checked"{% endif %} value="true">
+						Energias perigosas
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item9" class="checkbox-label">
+						<input type="checkbox" id="chk_item9" name="chk_item9" {% if documento.chk_item9 %}checked="checked"{% endif %} value="true">
+						Asfixiantes
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item10" class="checkbox-label">
+						<input type="checkbox" id="chk_item10" name="chk_item10" {% if documento.chk_item10 %}checked="checked"{% endif %} value="true">
+						Espaços confinado
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item11" class="checkbox-label">
+						<input type="checkbox" id="chk_item11" name="chk_item11" {% if documento.chk_item11 %}checked="checked"{% endif %} value="true">
+						Içamento de cargas
+					</label>
+            </div>
+
+            <div class="checkbox-container">
+                <label for="chk_item12" class="checkbox-label">
+						<input type="checkbox" id="chk_item12" name="chk_item12" {% if documento.chk_item12 %}checked="checked"{% endif %} value="true">
+						Escavação / perfuração / riscos estruturais
+					</label>
+            </div>
+        </fieldset>
+
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+
+</html>

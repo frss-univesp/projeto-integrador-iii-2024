@@ -1,0 +1,153 @@
+/* styles.css */
+
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.menu-wrapper {
+    background-color: #333;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+
+nav ul li a:hover {
+    background-color: #555;
+}
+
+nav ul li ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #444;
+    display: none;
+    border: 1px solid #555;
+    z-index: 10;
+}
+
+nav ul li:hover > ul {
+    display: block;
+}
+
+nav ul li ul li {
+    width: 200px;
+}
+
+nav ul li ul li a {
+    padding: 10px;
+    border-bottom: 1px solid #555;
+}
+
+nav ul li ul li a:hover {
+    background-color: #666;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.lista-executores {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.lista-executores th, .lista-executores td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    font-size: 0.9em;
+}
+
+.lista-executores th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: #555;
+}
+
+.lista-executores tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.lista-executores tbody tr:hover {
+    background-color: #eee;
+}
+
+.lista-executores td:nth-child(1) { /* Matrícula */
+    width: 8%;
+}
+
+.lista-executores td:nth-child(2) { /* Nome Completo */
+    width: 30%;
+}
+
+.lista-executores td:nth-child(3), /* Data de Inclusão */
+.lista-executores td:nth-child(4) { /* Data de Exclusão */
+    width: 15%;
+    white-space: nowrap; /* Evitar quebras de linha em datas */
+}
+
+.lista-executores td:nth-child(5) { /* Função */
+    width: 32%;
+}
+
+.btn-cadastrar, .btn-voltar {
+    display: inline-block;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #5cb85c;
+    color: #fff;
+    background-color: #5cb85c;
+    border-radius: 4px;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    margin-right: 5px;
+}
+
+.btn-voltar {
+    border-color: #d9534f;
+    background-color: #d9534f;
+}
+
+.btn-cadastrar:hover, .btn-voltar:hover {
+    background-color: #4cae4c;
+    border-color: #4cae4c;
+}
+
+p {
+    font-size: 0.9em;
+    color: #777;
+}
+
+  .edit-button {
+	display: inline-block;
+	padding: 3px 6px;
+	background-color: rgb(211, 211, 211);
+	color: black;
+	text-decoration: none;
+	border-radius: 4px;
+  }

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cadastro de Executor</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='assets/styles_edit_exec.css')}}" >
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <div class="menu-wrapper">
+        <nav>
+            <ul>
+                <li>
+                    <a href="#">Opções</a>
+                    <ul>
+                        <li><a href="{{ url_for('list_exec') }}" class="btn-voltar">Voltar à lista de executores</a></li>
+                        <li><a href="{{ url_for('index') }}" class="btn-voltar">Voltar à tela inicial</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <h1>Cadastro de Executor</h1>
+    <form action="/save_exec" method="POST">
+
+        <label for="matricula">
+            <span>Matrícula:</span>
+            <input type="number" id="_id" name="_id" value="{{ documento._id if documento else '' }}" readonly>
+        </label>
+
+        <label for="nome_completo">
+            <span>Nome Completo:</span>
+            <input type="text" id="nome_completo" name="nome_completo" value="{{ documento.nome_completo if documento else '' }}">
+        </label>
+
+        <label for="data_inclusao">
+            <span>Data/Hora da Inclusão:</span>
+            <input type="datetime-local" id="data_inclusao" name="data_inclusao" value="{{ documento.data_inclusao if documento else '' }}">
+        </label>
+
+        <label for="data_exclusao">
+            <span>Data/Hora da Exclusão:</span>
+            <input type="datetime-local" id="data_exclusao" name="data_exclusao" value="{{ documento.data_exclusao if documento else '' }}">
+        </label>
+
+        <label for="funcao">
+            <span>Função:</span>
+            <input type="text" id="funcao" name="funcao" value="{{ documento.funcao if documento else '' }}">
+        </label>
+
+        <h2>Certificações</h2>
+        {% if documento and documento.certificacoes %}
+        <table class="sub-table">
+            <thead>
+                <tr>
+                    <th>Nome da Certificação</th>
+                    <th>Início da Vigência</th>
+                    <th>Fim da Vigência</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cert in documento.certificacoes %}
+                {% if cert.id_cerficacao is defined %}
+                    <tr>
+                        <td>
+                            {{ cert.nome_cerficacao if cert else 'Certificação não encontrada' }}
+                        </td>
+                        <td>{{ cert.dt_inicio_vigencia }}</td>
+                        <td>{{ cert.dt_fim_vigencia }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Nenhuma certificação cadastrada para este executor.</p>
+        {% endif %}
+
+        <h3>Adicionar Nova Certificação</h3>
+        <div class="add-certification">
+            <label for="id_cerficacao">ID Certificação:</label>
+            <select id="id_cerficacao" name="id_cerficacao">
+                <option value="">Selecione a Certificação</option>
+                {% for cert in lista_certificacoes %}
+                    <option value="{{ cert._id }}">{{ cert.nome_certificacao }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="dt_inicio_vigencia_cert">Início da Vigência:</label>
+            <input type="datetime-local" id="dt_inicio_vigencia_cert" name="dt_inicio_vigencia_cert"><br><br>
+
+            <label for="dt_fim_vigencia_cert">Fim da Vigência:</label>
+            <input type="datetime-local" id="dt_fim_vigencia_cert" name="dt_fim_vigencia_cert"><br><br>
+
+            <button type="button" onclick="adicionarCertificacao()">Adicionar Certificação</button>
+        </div>
+
+        <div id="novas_certificacoes">
+        </div>
+
+        <input type="hidden" id="certificacoes_json" name="certificacoes_json" value="[]">
+
+        <input type="submit" value="Salvar Executor">
+    </form>
+
+    <script>
+        let novasCertificacoes = [];
+        const novasCertificacoesDiv = document.getElementById('novas_certificacoes');
+        const certificacoesJsonInput = document.getElementById('certificacoes_json');
+
+        function adicionarCertificacao() {
+            const id_cerficacao_select = document.getElementById('id_cerficacao');
+            const id_cerficacao = id_cerficacao_select.value;
+            const nome_cerficacao = id_cerficacao_select.options[id_cerficacao_select.selectedIndex].text;
+            const dt_inicio_vigencia_cert = document.getElementById('dt_inicio_vigencia_cert').value;
+            const dt_fim_vigencia_cert = document.getElementById('dt_fim_vigencia_cert').value;
+
+            if (id_cerficacao && dt_inicio_vigencia_cert && dt_fim_vigencia_cert) {
+                const novaCertificacao = {
+                    id_cerficacao: parseInt(id_cerficacao),
+                    nome_cerficacao: nome_cerficacao,
+                    dt_inicio_vigencia: dt_inicio_vigencia_cert,
+                    dt_fim_vigencia: dt_fim_vigencia_cert
+                };
+                novasCertificacoes.push(novaCertificacao);
+                atualizarListaCertificacoes();
+                limparCamposCertificacao();
+            } else {
+                alert("Por favor, selecione a certificação e preencha as datas de vigência.");
+            }
+        }
+
+        function atualizarListaCertificacoes() {
+            novasCertificacoesDiv.innerHTML = '';
+            if (novasCertificacoes.length > 0) {
+                const tabela = document.createElement('table');
+                tabela.classList.add('sub-table');
+
+                const thead = document.createElement('thead');
+                const cabecalho = document.createElement('tr');
+                const thNome = document.createElement('th');
+                thNome.textContent = 'Nome da Certificação';
+                const thInicio = document.createElement('th');
+                thInicio.textContent = 'Início da Vigência';
+                const thFim = document.createElement('th');
+                thFim.textContent = 'Fim da Vigência';
+                const thAcoes = document.createElement('th');
+                thAcoes.textContent = 'Ações';
+                
+                cabecalho.appendChild(thNome);
+                cabecalho.appendChild(thInicio);
+                cabecalho.appendChild(thFim);
+                cabecalho.appendChild(thAcoes);
+                thead.appendChild(cabecalho);
+                tabela.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                novasCertificacoes.forEach((cert, index) => {
+                    const linha = document.createElement('tr');
+                    
+                    const tdNome = document.createElement('td');
+                    tdNome.textContent = cert.nome_cerficacao;
+                    
+                    const tdInicio = document.createElement('td');
+                    tdInicio.textContent = cert.dt_inicio_vigencia;
+                    
+                    const tdFim = document.createElement('td');
+                    tdFim.textContent = cert.dt_fim_vigencia;
+                    
+                    const tdAcoes = document.createElement('td');
+                    const btnRemover = document.createElement('button');
+                    btnRemover.textContent = 'Remover';
+                    btnRemover.onclick = function() { removerCertificacao(index); };
+                    tdAcoes.appendChild(btnRemover);
+                    
+                    linha.appendChild(tdNome);
+                    linha.appendChild(tdInicio);
+                    linha.appendChild(tdFim);
+                    linha.appendChild(tdAcoes);
+                    tbody.appendChild(linha);
+                });
+                tabela.appendChild(tbody);
+                novasCertificacoesDiv.appendChild(tabela);
+            } else {
+                const mensagem = document.createElement('p');
+                mensagem.textContent = 'Nenhuma nova certificação adicionada.';
+                novasCertificacoesDiv.appendChild(mensagem);
+            }
+            
+            certificacoesJsonInput.value = JSON.stringify(novasCertificacoes);
+        }
+
+        function removerCertificacao(index) {
+            novasCertificacoes.splice(index, 1);
+            atualizarListaCertificacoes();
+        }
+
+        function limparCamposCertificacao() {
+            document.getElementById('id_cerficacao').value = '';
+            document.getElementById('dt_inicio_vigencia_cert').value = '';
+            document.getElementById('dt_fim_vigencia_cert').value = '';
+        }
+
+        atualizarListaCertificacoes();
+    </script>
+</body>
+</html>

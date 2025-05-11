@@ -1,0 +1,272 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex; /* Adicionado para alinhar os labels e inputs */
+    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
+    justify-content: flex-start; /* Alinha os itens à esquerda */
+}
+
+label {
+    width: calc(33.33% - 20px); /* Ajuste para três colunas com espaçamento */
+    margin: 0 10px 10px 0;
+    font-size: 14px;
+    white-space: nowrap;
+    display: block;
+}
+
+span {
+    display: block;
+    margin: 0 0 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+input[type="number"],
+textarea {
+    width: calc(100% - 0px); /* O input ocupa toda a largura do label */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+h2 {
+    color: #333;
+    margin-top: 20px;
+    width: 100%; /* Ocupa toda a largura para ficar acima da tabela */
+}
+
+table.sub-table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+table.sub-table th,
+table.sub-table td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 10px;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+table.sub-table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+    color: #333;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+table.sub-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table.sub-table th:first-child,
+table.sub-table td:first-child {
+    width: 20%;
+}
+
+table.sub-table th:nth-child(2),
+table.sub-table td:nth-child(2) {
+    width: 40%;
+}
+
+table.sub-table th:nth-child(3),
+table.sub-table td:nth-child(3) {
+    width: 40%;
+}
+
+h3 {
+    color: #333;
+    margin-top: 20px;
+    width: 100%; /* Ocupa toda a largura para ficar acima da seção de adicionar */
+}
+
+.add-certification {
+    margin-top: 15px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    width: 100%; /* Ocupa toda a largura */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.add-certification label {
+    width: 150px;
+    font-weight: normal;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.add-certification input[type="number"],
+.add-certification input[type="datetime-local"] {
+    width: calc(100% - 160px);
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.add-certification button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    width: auto; /* Ajusta a largura ao conteúdo */
+}
+
+.add-certification button:hover {
+    background-color: #0056b3;
+}
+
+#novas_certificacoes {
+    margin-top: 15px;
+    width: 100%; /* Ocupa toda a largura */
+}
+
+#novas_certificacoes p {
+    font-style: italic;
+    color: #777;
+}
+
+.menu-wrapper {
+    max-width: 150px;
+    margin: 20px 20px 20px 0; /* Move o menu para a esquerda */
+    float: left;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #a7d3bb;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+nav li {
+    display: block;
+}
+
+nav a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: #8bc34a;
+    color: white;
+}
+
+nav ul ul {
+    display: none;
+    position: static;
+    background-color: #f2f2f2;
+    min-width: 100%;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+nav ul li:hover > ul {
+    display: block;
+}
+
+nav ul ul li {
+    width: 100%;
+    display: block;
+    position: relative;
+}
+
+.btn-voltar {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-right: 0;
+    display: block;
+    margin-bottom: 5px;
+    text-align: left;
+    transition: background-color 0.3s ease;
+}
+
+.btn-voltar:hover {
+    background-color: #45a049;
+}
+
+.edit-button {
+    display: inline-block;
+    padding: 5px 8px;
+    background-color: #ddd;
+    color: black;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #ccc;
+}
+
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    width: auto; /* Ajusta a largura ao conteúdo */
+    float: right; /* Alinha o botão "Salvar Executor" à direita */
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
