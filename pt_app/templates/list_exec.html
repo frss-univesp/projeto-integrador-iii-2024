@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Executores</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/styles_list_exec.css') }}">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div class="menu-wrapper">
+        <nav>
+            <ul>
+                <li>
+                    <a href="#">Opções</a>
+                    <ul>
+                        <li><a href="{{ url_for('edit_exec') }}" class="btn-cadastrar">Cadastrar novo executor</a></li>
+                        <li><a href="{{ url_for('index') }}" class="btn-voltar">Voltar à tela inicial</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <h2>Lista de Executores Cadastrados</h2>
+    {% if executores %}
+    <table class="lista-executores">
+        <thead>
+            <tr>
+                <th class="action-column"><span class="edit-button"></span></th>
+                <th>Matrícula</th>
+                <th>Nome Completo</th>
+                <th>Data de Inclusão</th>
+                <th>Data de Exclusão</th>
+                <th>Função</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for executor in executores %}
+            <tr>
+
+                <td>
+                    <a href="{{ url_for('edit_exec', executor=executor._id) }}" class="edit-button">Editar</a>
+                </td>
+
+                <td>{{ executor._id }}</td>
+                <td>{{ executor.nome_completo }}</td>
+                <td class="date-format">{{ executor.data_inclusao }}</td>
+                <td class="date-format">{{ executor.data_exclusao if executor.data_exclusao else 'N/A' }}</td>
+                <td>{{ executor.funcao }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Nenhum executor cadastrado.</p>
+    {% endif %}
+</body>
+<script src="static/assets/utils.js"></script>
+</html>

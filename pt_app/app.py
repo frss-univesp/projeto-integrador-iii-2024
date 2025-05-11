@@ -1,30 +1,66 @@
-from flask import Flask, render_template, request, redirect, url_for
-from bson import ObjectId
+import json
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from pymongo import MongoClient
-import os
+from datetime import datetime
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 title = "Sistema de emissão de PT"
 heading = "Sistema de emissão de PT"
 
-uri = "mongodb+srv://pi2_writer:74ZMHoV9iSZtMrfr@cluster0.tz7tehv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-client = MongoClient(r"mongodb://pi-pt:MAjBdjPAhtuchy2bCGJa87AyLXCEfo4WXg6bAr2GG8tpL4PvN79I18SqoBg8fSYCk5DLbu4EfioqACDbIvfEaQ==@pi-pt.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@pi-pt@")
-db = client['seg_trabalho']
-todos = db['perm_trabalho']
+client = MongoClient(r"mongodb+srv://pi2_writer:74ZMHoV9iSZtMrfr@cluster0.tz7tehv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+db = client['proj_integrador_ii']
+coll_pt = db['perm_trabalho']
+coll_executores = db['executores']
+coll_certificacoes = db['certificacoes']
 
-@app.route('/', methods=['GET', 'POST'])
+def max_id(collection):
+    qt_docs = collection.count_documents({})
+    if qt_docs > 0:
+        result = collection.aggregate([
+            {'$group': {'_id': None, 'max_value': {'$max': '$_id'}}}
+        ])
+        max_value = int(result.next()['max_value'])
+        return max_value + 1
+    else:
+        return 1
+
+def get_certificacao(cert_id):
+    return coll_certificacoes.find_one({'_id': int(cert_id)})
+
+def get_distinct_certificacoes():
+    return coll_certificacoes.find()
+
+
+@app.route('/', methods=['GET'])
 def index():
+    pts = coll_pt.find()
+    return render_template('index.html', pts=pts)
+
+
+@app.route('/edit_pt', methods=['GET', 'POST'])
+@app.route('/edit_pt/<pt>', methods=['GET', 'POST'])
+def edit_pt(pt=None):
+    documento = coll_pt.find_one({'_id': int(pt)}) if pt else None
+
+    print(documento)
+
+    return render_template('edit_pt.html', documento=documento)
+
+
+@app.route('/save_pt', methods=['POST'])
+def save_pt():
     if request.method == 'POST':
-        nr_pt = request.form.get("nr_pt")
+        nr_pt = request.form.get("_id")
         local = request.form.get("local")
         dt_execucao = request.form.get("dt_execucao")
         dt_conclusao = request.form.get("dt_conclusao")
         dt_prorrog = request.form.get("dt_prorrog")
         descr_ativ = request.form.get("descr_ativ")
         nm_solicte = request.form.get("nm_solicte")
-        area_solicte = request.form.get("nm_solicte")
+        area_solicte = request.form.get("area_solicte")
         ferram_utilz = request.form.get("ferram_utilz")
-        doc_ctrl_risc = request.form.get("ferram_utilz")
+        doc_ctrl_risc = request.form.get("doc_ctrl_risc")
         apontamento = request.form.get("apontamento")
         form_ctrl_13 = request.form.get("form_ctrl_13")
         form_ctrl_14 = request.form.get("form_ctrl_14")
@@ -49,19 +85,21 @@ def index():
         nm_aprovador = request.form.get("nm_aprovador")
         cargo_aprovador = request.form.get("cargo_aprovador")
         dt_aprovacao = request.form.get("dt_aprovacao")
-        nm_exec_1 = request.form.get("nm_exec_1")
-        cargo_exec_1 = request.form.get("cargo_exec_1")
-        nm_exec_2 = request.form.get("nm_exec_2")
-        cargo_exec_2 = request.form.get("cargo_exec_2")        
-        nm_exec_3 = request.form.get("nm_exec_3")
-        cargo_exec_3 = request.form.get("cargo_exec_3")        
         
+        executores_selecionados_json = request.form.get("executores_selecionados")
 
+        if not executores_selecionados_json:
+            executores_selecionados = []
+        else:
+            try:
+                executores_selecionados = json.loads(executores_selecionados_json)
+            except json.JSONDecodeError as e:
+                executores_selecionados = []
+        
         chk_item1 = True if request.form.get('chk_item1') == 'true' else False
         chk_item2 = True if request.form.get('chk_item2') == 'true' else False
         chk_item3 = True if request.form.get('chk_item3') == 'true' else False
         chk_item4 = True if request.form.get('chk_item4') == 'true' else False
-        chk_item5 = True if request.form.get('chk_item5') == 'true' else False
         chk_item5 = True if request.form.get('chk_item5') == 'true' else False
         chk_item6 = True if request.form.get('chk_item6') == 'true' else False
         chk_item7 = True if request.form.get('chk_item7') == 'true' else False
@@ -78,8 +116,7 @@ def index():
         chk_item18 = True if request.form.get('chk_item18') == 'true' else False
         chk_item19 = True if request.form.get('chk_item19') == 'true' else False
 
-        doc = {
-            'nr_pt': nr_pt,
+        doc_pt = {
             'local': local,
             'dt_execucao': dt_execucao,
             'dt_conclusao': dt_conclusao,
@@ -89,11 +126,11 @@ def index():
             'area_solicte': area_solicte,
             'ferram_utilz': ferram_utilz,
             'doc_ctrl_risc': doc_ctrl_risc,
+            'apontamento': apontamento,
             'chk_item1': chk_item1,
             'chk_item2': chk_item2,
             'chk_item3': chk_item3,
             'chk_item4': chk_item4,
-            'chk_item5': chk_item5,
             'chk_item5': chk_item5,
             'chk_item6': chk_item6,
             'chk_item7': chk_item7,
@@ -132,19 +169,209 @@ def index():
             'nm_aprovador': nm_aprovador,
             'cargo_aprovador': cargo_aprovador,
             'dt_aprovacao': dt_aprovacao,
-            'nm_exec_1': nm_exec_1,
-            'cargo_exec_1': cargo_exec_1,
-            'nm_exec_2': nm_exec_2,
-            'cargo_exec_2': cargo_exec_2,
-            'nm_exec_3': nm_exec_3,
-            'cargo_exec_3': cargo_exec_3            
+            'executores': executores_selecionados
         }
 
-        # Inserir o documento na colection
-        collection.insert_one(doc)
+        if nr_pt:
+            coll_pt.update_one({'_id': int(nr_pt)}, {'$set': doc_pt})
+        else:
+            doc_pt['_id'] = max_id(coll_pt)
+            coll_pt.insert_one(doc_pt)
 
-        return 'Permissão de trabalho inserida com sucesso inseridos com sucesso!'
-    return render_template('cadastra_pt.html')
+        return redirect(url_for('index'))
+    
 
-if __name__ == "__main__":
-	app.run()
+@app.route('/buscar_certificacoes', methods=['POST'])
+def buscar_certificacoes():
+
+    checkbox_data = request.json
+    query = {"$or": []}
+
+    for chk_key, is_checked in checkbox_data.items():
+        if is_checked:
+            query["$or"].append({chk_key: True})
+
+    if not query["$or"]:
+        return jsonify({"certificacoes": []})
+    
+    certificacoes = list(coll_certificacoes.find(query))
+    certificacoes_necessarias = {}
+
+    for cert in certificacoes:
+        nome_cert = cert["nome_certificacao"]
+        if nome_cert not in certificacoes_necessarias:
+            certificacoes_necessarias[nome_cert] = {
+                "id": cert.get("_id"),
+                "nome_certificacao": nome_cert
+            }
+
+    lista_certificacoes = list(certificacoes_necessarias.values())
+    return jsonify({"certificacoes": lista_certificacoes})
+
+
+@app.route('/buscar_executores_qualificados', methods=['POST'])
+def buscar_executores_qualificados():
+    
+    data = request.json
+    certificacoes_necessarias = data.get('certificacoes', [])    
+    certificacoes_ids = []
+
+    for cert_id in certificacoes_necessarias:
+
+        if isinstance(cert_id, str):
+            try:
+                certificacoes_ids.append(int(cert_id))
+            except ValueError:
+                try:
+                    certificacoes_ids.append(ObjectId(cert_id))
+                except:
+                    certificacoes_ids.append(cert_id)
+        else:
+            certificacoes_ids.append(cert_id)
+    
+    query = {
+        "certificacoes.id_cerficacao": {"$in": certificacoes_ids}
+    }
+    
+    executores = list(coll_executores.find(query))
+    
+    for executor in executores:
+        executor['_id'] = str(executor['_id'])
+        if 'certificacoes' in executor:
+            for cert in executor['certificacoes']:
+                if '_id' in cert:
+                    cert['_id'] = str(cert['_id'])
+    
+    return jsonify({'executores': executores})
+
+
+@app.route('/list_exec', methods=['GET'])
+def list_exec():
+    executores = coll_executores.find()
+    return render_template('list_exec.html', executores=executores)
+
+
+@app.route('/edit_exec', methods=['GET', 'POST'])
+@app.route('/edit_exec/<executor>', methods=['GET', 'POST'])
+def edit_exec(executor=None):
+    documento = coll_executores.find_one({'_id': int(executor)}) if executor else None
+    lista_certificacoes = get_distinct_certificacoes()
+
+    return render_template('edit_exec.html', documento=documento, lista_certificacoes=lista_certificacoes)
+
+
+@app.route('/save_exec', methods=['POST'])
+def save_exec():
+    if request.method == 'POST':
+        matricula_str = request.form.get("_id")
+        nome_completo = request.form.get('nome_completo')
+        data_inclusao_str = request.form.get('data_inclusao')
+        data_exclusao_str = request.form.get('data_exclusao')
+        funcao = request.form.get('funcao')
+        certificacoes_json = request.form.get('certificacoes_json')
+        data_inclusao = data_inclusao_str if data_inclusao_str else None
+        data_exclusao = data_exclusao_str if data_exclusao_str else None
+
+        certificacoes = json.loads(certificacoes_json)
+
+        doc_executor_base = {
+            'nome_completo': nome_completo,
+            'data_inclusao': data_inclusao,
+            'data_exclusao': data_exclusao,
+            'funcao': funcao,
+            'certificacoes': certificacoes
+        }
+
+        if matricula_str:
+            executor_existente = coll_executores.find_one({'_id': int(matricula_str)})
+            if executor_existente and 'certificacoes' in executor_existente:
+                certificacoes_existentes = executor_existente['certificacoes']
+
+                certificacoes_ids_existentes = [cert.get('id_cerficacao') for cert in certificacoes_existentes 
+                                            if isinstance(cert, dict) and 'id_cerficacao' in cert]
+                
+                certificacoes_a_adicionar = [cert for cert in certificacoes 
+                                         if cert.get('id_cerficacao') not in certificacoes_ids_existentes]
+                
+                certificacoes_atualizadas = certificacoes_existentes + certificacoes_a_adicionar
+                
+                coll_executores.update_one(
+                    {'_id': int(matricula_str)},
+                    {'$set': {**doc_executor_base, 'certificacoes': certificacoes_atualizadas}}
+                )
+            else:
+                coll_executores.update_one(
+                    {'_id': int(matricula_str)},
+                    {'$set': doc_executor_base}
+                )
+        else:
+            doc_executor = {**doc_executor_base, '_id': max_id(coll_executores)}
+            coll_executores.insert_one(doc_executor)
+
+        return redirect(url_for('list_exec'))
+
+
+@app.route('/list_certificacoes', methods=['GET'])
+def list_certificacoes():
+    certificacoes = coll_certificacoes.find()
+    return render_template('list_certificacoes.html', certificacoes=certificacoes)
+
+
+@app.route('/edit_certificacao', methods=['GET', 'POST'])
+@app.route('/edit_certificacao/<certificacao>', methods=['GET', 'POST'])
+def edit_certificacao(certificacao=None):
+    documento = coll_certificacoes.find_one({'_id': int(certificacao)}) if certificacao else None
+    return render_template('edit_certificacao.html', documento=documento)
+
+
+@app.route('/save_certificacao', methods=['POST'])
+def save_certificacao():
+    if request.method == 'POST':
+        id = request.form.get("_id")
+        nome_certificacao = request.form.get('nome_certificacao')
+        dt_inicio_validade = request.form.get('dt_inicio_validade')
+        dt_fim_validade = request.form.get('dt_fim_validade')
+        observacao = request.form.get('observacao')
+        chk_item1 = True if request.form.get('chk_item1') == 'true' else False
+        chk_item2 = True if request.form.get('chk_item2') == 'true' else False
+        chk_item3 = True if request.form.get('chk_item3') == 'true' else False
+        chk_item4 = True if request.form.get('chk_item4') == 'true' else False
+        chk_item5 = True if request.form.get('chk_item5') == 'true' else False
+        chk_item6 = True if request.form.get('chk_item6') == 'true' else False
+        chk_item7 = True if request.form.get('chk_item7') == 'true' else False
+        chk_item8 = True if request.form.get('chk_item8') == 'true' else False
+        chk_item9 = True if request.form.get('chk_item9') == 'true' else False
+        chk_item10 = True if request.form.get('chk_item10') == 'true' else False
+        chk_item11 = True if request.form.get('chk_item11') == 'true' else False
+        chk_item12 = True if request.form.get('chk_item12') == 'true' else False
+
+        doc_certificacao = {
+            'nome_certificacao': nome_certificacao,
+            'dt_inicio_validade': dt_inicio_validade,
+            'dt_fim_validade': dt_fim_validade,
+            'observacao': observacao,
+            'chk_item1': chk_item1,
+            'chk_item2': chk_item2,
+            'chk_item3': chk_item3,
+            'chk_item4': chk_item4,
+            'chk_item5': chk_item5,
+            'chk_item6': chk_item6,
+            'chk_item7': chk_item7,
+            'chk_item8': chk_item8,
+            'chk_item9': chk_item9,
+            'chk_item10': chk_item10,
+            'chk_item11': chk_item11,
+            'chk_item12': chk_item12
+        }
+
+        if id:
+            coll_certificacoes.update_one({'_id': int(id)}, {'$set': doc_certificacao})
+        else:
+            doc_certificacao['_id'] = max_id(coll_certificacoes)
+            coll_certificacoes.insert_one(doc_certificacao)
+
+        return redirect(url_for('list_certificacoes'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

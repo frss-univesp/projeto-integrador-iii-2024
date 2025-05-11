@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Executores</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/styles_list_exec.css') }}">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div class="menu-wrapper">
+        <nav>
+            <ul>
+                <li>
+                    <a href="#">Opções</a>
+                    <ul>
+                        <li><a href="{{ url_for('edit_certificacao') }}" class="btn-cadastrar">Cadastrar nova certificação</a></li>
+                        <li><a href="{{ url_for('index') }}" class="btn-voltar">Voltar à tela inicial</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <h2>Lista de Executores Cadastrados</h2>
+    {% if certificacoes %}
+    <table class="lista-executores">
+        <thead>
+            <tr>
+                <th class="action-column"><span class="edit-button"></span></th>
+                <th>ID da certificação</th>
+                <th>Nome da certificação</th>
+                <th>Início da validade</th>
+                <th>Fim da validade</th>
+                <th>Observações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for certificacao in certificacoes %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('edit_certificacao', certificacao=certificacao._id) }}" class="edit-button">Editar</a>
+                </td>
+                <td>{{ certificacao._id }}</td>
+                <td>{{ certificacao.nome_certificacao }}</td>
+                <td class="date-format">{{ certificacao.dt_inicio_validade }}</td>
+                <td class="date-format">{{ certificacao.dt_fim_validade if certificacao.dt_fim_validade else 'N/A' }}</td>
+                <td>{{ certificacao.observacao }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Nenhuma certificação cadastrada.</p>
+    {% endif %}
+</body>
+<script src="static/assets/utils.js"></script>
+</html>
