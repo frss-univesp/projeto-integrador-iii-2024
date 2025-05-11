@@ -4,7 +4,168 @@
 <head>
     <title>Emissão de Permissão de Trabalho</title>
     <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='assets/styles.css')}}" >
+    <script src="/static/assets/executores.js"></script>
     <meta charset="UTF-8">
+    <script>
+        function atualizarCertificacoes() {
+            const checkboxes = {};
+            for (let i = 1; i <= 12; i++) {
+                const checkbox = document.getElementById(`chk_item${i}`);
+                checkboxes[`chk_item${i}`] = checkbox.checked;
+            }
+
+            fetch('/buscar_certificacoes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(checkboxes)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const certTable = document.getElementById('certification-table-body');
+                certTable.innerHTML = '';
+                
+                if (data.certificacoes && data.certificacoes.length > 0) {
+                    data.certificacoes.forEach(cert => {
+                        const row = document.createElement('tr');
+                        const cell = document.createElement('td');
+                        cell.textContent = cert.nome_certificacao;
+                        
+                        row.appendChild(cell);
+                        certTable.appendChild(row);
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.textContent = 'Nenhuma certificação necessária para os perigos selecionados';
+                    row.appendChild(cell);
+                    certTable.appendChild(row);
+                }
+
+                buscarExecutoresQualificados(data.certificacoes);
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar certificações:', error);
+            });
+        }
+
+        function buscarExecutoresQualificados(certificacoes) {
+            if (!certificacoes || certificacoes.length === 0) {
+                const executoresContainer = document.getElementById('executores-qualificados-body');
+                executoresContainer.innerHTML = '';
+                document.getElementById('sem-executores').style.display = 'block';
+                return;
+            }
+
+            const certificacoesIds = certificacoes.map(cert => cert.id);
+            
+            // Buscar os executores qualificados com base nas certificações necessárias
+            fetch('/buscar_executores_qualificados', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ certificacoes: certificacoesIds })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const executoresContainer = document.getElementById('executores-qualificados-body');
+                executoresContainer.innerHTML = '';
+                
+                if (data.executores && data.executores.length > 0) {
+                    document.getElementById('sem-executores').style.display = 'none';
+                    
+                    // Obter os executores salvos do documento atual (se existir)
+                    const executoresSalvos = obterExecutoresSalvos();
+
+                    // Map para verificação rápida se um executor já está selecionado
+                    const executoresSalvosMap = {};
+                    if (executoresSalvos) {
+                        executoresSalvos.forEach(executor => {
+                            executoresSalvosMap[executor.id || executor._id] = executor;
+                        });
+                    }
+                    
+                    // Adicionar primeiro os executores já salvos (checkbox marcado)
+                    if (executoresSalvos && executoresSalvos.length > 0) {
+                        executoresSalvos.forEach(executor => {
+                            adicionarLinhaExecutor(executoresContainer, executor, true);
+                        });
+                    }
+                    
+                    // Adicionar os executores sugeridos que ainda não foram selecionados (checkbox desmarcado)
+                    data.executores.forEach(executor => {
+                        const executorId = executor._id || executor.id;
+                        if (!executoresSalvosMap[executorId]) {
+                            adicionarLinhaExecutor(executoresContainer, executor, false);
+                        }
+                    });
+                } else {
+                    // Se não houver executores qualificados, mas houver executores salvos, ainda assim os exibimos
+                    const executoresSalvos = obterExecutoresSalvos();
+                    if (executoresSalvos && executoresSalvos.length > 0) {
+                        document.getElementById('sem-executores').style.display = 'none';
+                        executoresSalvos.forEach(executor => {
+                            adicionarLinhaExecutor(executoresContainer, executor, true);
+                        });
+                    } else {
+                        document.getElementById('sem-executores').style.display = 'block';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar executores qualificados:', error);
+            });
+        }
+
+        // Função para obter os executores salvos do documento atual
+        function obterExecutoresSalvos() {
+            // Verifica se a variável global documento existe e contém executores
+            if (typeof documento !== 'undefined' && documento && documento.executores) {
+                return documento.executores;
+            }
+            return null;
+        }
+
+        // Função auxiliar para criar uma linha de executor na tabela
+        function adicionarLinhaExecutor(container, executor, checked) {
+            const row = document.createElement('tr');
+            
+            const cellCheck = document.createElement('td');
+            cellCheck.className = 'checkbox-cell';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'executores_selecionados[]';
+            checkbox.value = executor._id || executor.id;
+            checkbox.id = `executor_${executor._id || executor.id}`;
+            checkbox.style.margin = '0 auto';
+            checkbox.checked = checked;
+            cellCheck.appendChild(checkbox);
+            
+            const cellNome = document.createElement('td');
+            cellNome.textContent = executor.nome_completo || executor.nome;
+            
+            const cellFuncao = document.createElement('td');
+            cellFuncao.textContent = executor.funcao;
+            
+            row.appendChild(cellCheck);
+            row.appendChild(cellNome);
+            row.appendChild(cellFuncao);
+            
+            container.appendChild(row);
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            for (let i = 1; i <= 12; i++) {
+                const checkbox = document.getElementById(`chk_item${i}`);
+                checkbox.addEventListener('change', atualizarCertificacoes);
+            }
+
+            atualizarCertificacoes();
+        });
+    </script>
 </head>
 
 <body>
@@ -22,7 +183,7 @@
         </nav>
     </div>
     <h1>Emissão de Permissão de Trabalho</h1>
-    <form action="/save_pt" method="POST">
+    <form id="form-pt" method="POST" action="/save_pt">
 
         <input type="hidden" name="nr_pt" value="nr_pt">
         <input type="hidden" name="nr_pt" value="{{ documento._id if documento else '' }}">
@@ -77,175 +238,135 @@
 			<input type="text" id="doc_ctrl_risc" name="doc_ctrl_risc" value="{{ documento.doc_ctrl_risc if documento else '' }}">
 		</label>
 
-        <fieldset>
-            <legend>Perigos principais associados ao trabalho</legend>
+        <div class="fieldset-container">
+            <fieldset>
+                <legend>Perigos principais associados ao trabalho</legend>
 
-            <div class="checkbox-container">
-                <label for="chk_item1" class="checkbox-label">
-                    <input type="checkbox" id="chk_item1" name="chk_item1" {% if documento.chk_item1 %}checked="checked"{% endif %} value="true">
-					Queda de material ou trabalho em altura
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item1" class="checkbox-label">
+                        <input type="checkbox" id="chk_item1" name="chk_item1" {% if documento.chk_item1 %}checked="checked"{% endif %} value="true">
+                        Queda de material ou trabalho em altura
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item2" class="checkbox-label">
-						<input type="checkbox" id="chk_item2" name="chk_item2" {% if documento.chk_item2 %}checked="checked"{% endif %} value="true">
-						Movimentação de veículos
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item2" class="checkbox-label">
+                        <input type="checkbox" id="chk_item2" name="chk_item2" {% if documento.chk_item2 %}checked="checked"{% endif %} value="true">
+                        Movimentação de veículos
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item3" class="checkbox-label">
-						<input type="checkbox" id="chk_item3" name="chk_item3" {% if documento.chk_item3 %}checked="checked"{% endif %} value="true">
-						Fogo ou explosivos
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item3" class="checkbox-label">
+                        <input type="checkbox" id="chk_item3" name="chk_item3" {% if documento.chk_item3 %}checked="checked"{% endif %} value="true">
+                        Fogo ou explosivos
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item4" class="checkbox-label">
-						<input type="checkbox" id="chk_item4" name="chk_item4" {% if documento.chk_item4 %}checked="checked"{% endif %} value="true">
-						Atmosfera explosiva
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item4" class="checkbox-label">
+                        <input type="checkbox" id="chk_item4" name="chk_item4" {% if documento.chk_item4 %}checked="checked"{% endif %} value="true">
+                        Atmosfera explosiva
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item5" class="checkbox-label">
-						<input type="checkbox" id="chk_item5" name="chk_item5" {% if documento.chk_item5 %}checked="checked"{% endif %} value="true">
-						Oxidantes
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item5" class="checkbox-label">
+                        <input type="checkbox" id="chk_item5" name="chk_item5" {% if documento.chk_item5 %}checked="checked"{% endif %} value="true">
+                        Oxidantes
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item6" class="checkbox-label">
-						<input type="checkbox" id="chk_item6" name="chk_item6" {% if documento.chk_item6 %}checked="checked"{% endif %} value="true">
-						Tóxicos ou infectantes
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item6" class="checkbox-label">
+                        <input type="checkbox" id="chk_item6" name="chk_item6" {% if documento.chk_item6 %}checked="checked"{% endif %} value="true">
+                        Tóxicos ou infectantes
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item7" class="checkbox-label">
-						<input type="checkbox" id="chk_item7" name="chk_item7" {% if documento.chk_item7 %}checked="checked"{% endif %} value="true">
-						Corrosivos
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item7" class="checkbox-label">
+                        <input type="checkbox" id="chk_item7" name="chk_item7" {% if documento.chk_item7 %}checked="checked"{% endif %} value="true">
+                        Corrosivos
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item8" class="checkbox-label">
-						<input type="checkbox" id="chk_item8" name="chk_item8" {% if documento.chk_item8 %}checked="checked"{% endif %} value="true">
-						Energias perigosas
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item8" class="checkbox-label">
+                        <input type="checkbox" id="chk_item8" name="chk_item8" {% if documento.chk_item8 %}checked="checked"{% endif %} value="true">
+                        Energias perigosas
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item9" class="checkbox-label">
-						<input type="checkbox" id="chk_item9" name="chk_item9" {% if documento.chk_item9 %}checked="checked"{% endif %} value="true">
-						Asfixiantes
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item9" class="checkbox-label">
+                        <input type="checkbox" id="chk_item9" name="chk_item9" {% if documento.chk_item9 %}checked="checked"{% endif %} value="true">
+                        Asfixiantes
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item10" class="checkbox-label">
-						<input type="checkbox" id="chk_item10" name="chk_item10" {% if documento.chk_item10 %}checked="checked"{% endif %} value="true">
-						Espaços confinado
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item10" class="checkbox-label">
+                        <input type="checkbox" id="chk_item10" name="chk_item10" {% if documento.chk_item10 %}checked="checked"{% endif %} value="true">
+                        Espaços confinado
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item11" class="checkbox-label">
-						<input type="checkbox" id="chk_item11" name="chk_item11" {% if documento.chk_item11 %}checked="checked"{% endif %} value="true">
-						Içamento de cargas
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item11" class="checkbox-label">
+                        <input type="checkbox" id="chk_item11" name="chk_item11" {% if documento.chk_item11 %}checked="checked"{% endif %} value="true">
+                        Içamento de cargas
+                    </label>
+                </div>
 
-            <div class="checkbox-container">
-                <label for="chk_item12" class="checkbox-label">
-						<input type="checkbox" id="chk_item12" name="chk_item12" {% if documento.chk_item12 %}checked="checked"{% endif %} value="true">
-						Escavação / perfuração / riscos estruturais
-					</label>
-            </div>
+                <div class="checkbox-container">
+                    <label for="chk_item12" class="checkbox-label">
+                        <input type="checkbox" id="chk_item12" name="chk_item12" {% if documento.chk_item12 %}checked="checked"{% endif %} value="true">
+                        Escavação / perfuração / riscos estruturais
+                    </label>
+                </div>
 
-            <label for="apontamento">Apontamentos:</label>
-            <input type="text" id="apontamento" name="apontamento"><br><br>
-        </fieldset>
+                <label for="apontamento">Apontamentos:</label>
+                <input type="text" id="apontamento" name="apontamento"><br><br>
+            </fieldset>
 
-<!--    EDITAR A PARTIR DAQUI -->
-        <fieldset>
-            <legend>Executores designados para o trabalho</legend>
+            <fieldset>
+                <legend>Certificações necessárias</legend>
+                <table class="certification-table">
+                    <tbody id="certification-table-body">
 
+                    </tbody>
+                </table>
+            </fieldset>
 
+            <fieldset>
+                <legend>Executores das atividades</legend>
+                <p class="instrucao">Selecione os executores que possuem as certificações necessárias para esta atividade:</p>
+                <div id="executores-container">
+                    <table class="executores-table">
+                        <colgroup>
+                            <col style="width: 30px">
+                            <col style="width: auto">
+                            <col style="width: 70px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Nome do executor</th>
+                                <th>Função</th>
+                            </tr>
+                        </thead>
+                        <tbody id="executores-qualificados-body">
+                            <!-- Os executores serão carregados aqui dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="sem-executores" style="display: none;">
+                    <p>Nenhum executor encontrado com todas as certificações necessárias.</p>
+                </div>
+            </fieldset>
 
-
-            <h2>Certificações</h2>
-            {% if documento and documento.certificacoes %}
-            <table class="sub-table">
-                <thead>
-                    <tr>
-                        <th>Nome da Certificação</th>
-                        <th>Início da Vigência</th>
-                        <th>Fim da Vigência</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for cert in documento.certificacoes %}
-                    {% if cert.id_cerficacao is defined %}
-                        <tr>
-                            <td>
-                                {{ cert.nome_cerficacao if cert else 'Certificação não encontrada' }}
-                            </td>
-                            <td>{{ cert.dt_inicio_vigencia }}</td>
-                            <td>{{ cert.dt_fim_vigencia }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>Nenhuma certificação cadastrada para este executor.</p>
-            {% endif %}
-    
-            <h3>Adicionar Nova Certificação</h3>
-            <div class="add-certification">
-                <label for="id_cerficacao">ID Certificação:</label>
-                <select id="id_cerficacao" name="id_cerficacao">
-                    <option value="">Selecione a Certificação</option>
-                    {% for cert in lista_certificacoes %}
-                        <option value="{{ cert._id }}">{{ cert.nome_certificacao }}</option>
-                    {% endfor %}
-                </select><br><br>
-    
-                <label for="dt_inicio_vigencia_cert">Início da Vigência:</label>
-                <input type="datetime-local" id="dt_inicio_vigencia_cert" name="dt_inicio_vigencia_cert"><br><br>
-    
-                <label for="dt_fim_vigencia_cert">Fim da Vigência:</label>
-                <input type="datetime-local" id="dt_fim_vigencia_cert" name="dt_fim_vigencia_cert"><br><br>
-    
-                <button type="button" onclick="adicionarCertificacao()">Adicionar Certificação</button>
-            </div>
-    
-            <div id="novas_certificacoes">
-                <!-- Novas certificações serão adicionadas aqui pelo JavaScript -->
-            </div>
-    
-            <input type="hidden" id="certificacoes_json" name="certificacoes_json" value="[]">
-
-
-
-
-
-
-
-
-
-
-
-        </fieldset>
-
-
-
-
-<!--    ATÉ AQUI -->
-
-
+        </div>
 
         <fieldset>
             <legend>Preparação geral e medidas de segurança (selecione caso aplicável)</legend>
@@ -260,9 +381,9 @@
                     <td>
                         <div class="checkbox-container">
                             <label for="chk_item13" class="checkbox-label checkbox-table">
-									<input type="checkbox" id="chk_item13" name="chk_item13" {% if documento.chk_item13 %}checked="checked"{% endif %} value="true">
-									Avaliação de impacto de atividades simultâneas
-								</label>
+                                <input type="checkbox" id="chk_item13" name="chk_item13" {% if documento.chk_item13 %}checked="checked"{% endif %} value="true">
+                                Avaliação de impacto de atividades simultâneas
+                            </label>
                         </div>
                     </td>
                     <td>
@@ -276,9 +397,9 @@
                     <td>
                         <div class="checkbox-container">
                             <label for="chk_item14" class="checkbox-label checkbox-table">
-									<input type="checkbox" id="chk_item14" name="chk_item14" {% if documento.chk_item14 %}checked="checked"{% endif %} value="true">
-									Isolamento da área
-								</label>
+                                <input type="checkbox" id="chk_item14" name="chk_item14" {% if documento.chk_item14 %}checked="checked"{% endif %} value="true">
+                                Isolamento da área
+                            </label>
                         </div>
                     </td>
                     <td>
@@ -292,9 +413,9 @@
                     <td class="checkbox-cell">
                         <div class="checkbox-container">
                             <label for="chk_item15" class="checkbox-label checkbox-table">
-									<input type="checkbox" id="chk_item15" name="chk_item15" {% if documento.chk_item15 %}checked="checked"{% endif %} value="true">
-									Isolamento dos dispositivos de segurança contra incêndio (detectores, alarmes, botoeiras, extintores, hidrantes)
-								</label>
+                                <input type="checkbox" id="chk_item15" name="chk_item15" {% if documento.chk_item15 %}checked="checked"{% endif %} value="true">
+                                Isolamento dos dispositivos de segurança contra incêndio (detectores, alarmes, botoeiras, extintores, hidrantes)
+                            </label>
                         </div>
                     </td>
                     <td>
@@ -308,9 +429,9 @@
                     <td>
                         <div class="checkbox-container">
                             <label for="chk_item16" class="checkbox-label checkbox-table">
-									<input type="checkbox" id="chk_item16" name="chk_item16" {% if documento.chk_item16 %}checked="checked"{% endif %} value="true">
-									Preparação do equipamento (drenagem, purga)
-								</label>
+                                <input type="checkbox" id="chk_item16" name="chk_item16" {% if documento.chk_item16 %}checked="checked"{% endif %} value="true">
+                                Preparação do equipamento (drenagem, purga)
+                            </label>
                         </div>
                     </td>
                     <td>
@@ -324,9 +445,9 @@
                     <td>
                         <div class="checkbox-container">
                             <label for="chk_item17" class="checkbox-label checkbox-table">
-									<input type="checkbox" id="chk_item17" name="chk_item17" {% if documento.chk_item17 %}checked="checked"{% endif %} value="true">
-									Remoção de materiais não essenciais para o trabalho
-								</label>
+                                <input type="checkbox" id="chk_item17" name="chk_item17" {% if documento.chk_item17 %}checked="checked"{% endif %} value="true">
+                                Remoção de materiais não essenciais para o trabalho
+                            </label>
                         </div>
                     </td>
                     <td>
@@ -340,9 +461,9 @@
                     <td>
                         <div class="checkbox-container">
                             <label for="chk_item18" class="checkbox-label checkbox-table">
-									<input type="checkbox" id="chk_item18" name="chk_item18" {% if documento.chk_item18 %}checked="checked"{% endif %} value="true">
-									Requerimentos de supervisão em caso de trabalho realizado por um trabalhador
-								</label>
+                                <input type="checkbox" id="chk_item18" name="chk_item18" {% if documento.chk_item18 %}checked="checked"{% endif %} value="true">
+                                Requerimentos de supervisão em caso de trabalho realizado por um trabalhador
+                            </label>
                         </div>
                     </td>
                     <td>
@@ -356,9 +477,9 @@
                     <td>
                         <div class="checkbox-container">
                             <label for="chk_item19" class="checkbox-label checkbox-table">
-									<input type="checkbox" id="chk_item19" name="chk_item19" {% if documento.chk_item19 %}checked="checked"{% endif %} value="true">
-									Requerimentos de emergência
-								</label>
+                                <input type="checkbox" id="chk_item19" name="chk_item19" {% if documento.chk_item19 %}checked="checked"{% endif %} value="true">
+                                Requerimentos de emergência
+                            </label>
                         </div>
                     </td>
                     <td>
@@ -383,7 +504,7 @@
 
         <fieldset>
             <legend>EPIs de uso obrigatório</legend>            
-			<table>
+            <table>
                 <tr>
                     <td>
                         <div class="label-container">
@@ -396,7 +517,7 @@
                         </div>
                     </td>
                 </tr>
-				
+                
                 <tr>
                     <td>
                         <div class="label-container">
@@ -409,7 +530,7 @@
                         </div>
                     </td>
                 </tr>
-				
+                
                 <tr>
                     <td>
                         <div class="label-container">
@@ -422,7 +543,7 @@
                         </div>
                     </td>
                 </tr>
-				
+                
                 <tr>
                     <td>
                         <div class="label-container">
@@ -435,7 +556,7 @@
                         </div>
                     </td>
                 </tr>
-				
+                
                 <tr>
                     <td>
                         <div class="label-container">
@@ -448,7 +569,7 @@
                         </div>
                     </td>
                 </tr>
-				
+                
                 <tr>
                     <td>
                         <div class="label-container">
@@ -462,89 +583,94 @@
                     </td>
                 </tr>
 
-			</table>			
+            </table>            
         </fieldset>
 
         <fieldset>
             <legend>EPCs de uso obrigatório</legend>
-			<table>			
-				<tr class="table-row">
-					<td>
-						<div class="label-container">
-							<label for="epc_1" class="label-column">Linha de vida / Pontos de ancoragem / Sistema de resgate:</label>
-						</div>
-					</td>
-					<td>
-						<div class="textbox">
-							<input type="text" id="epc_1" name="epc_1" value="{{ documento.epc_1 if documento else '' }}">
-						</div>
-					</td>
-				</tr>				
-				<tr>
-					<td>
-						<div class="label-container">
-							<label for="epc_2" class="label-column">Isolamento por cerquite / Guarda corpo / Tapume / Escora:</label>
-						</div>
-					</td>
-					<td>
-						<div class="textbox">
-							<input type="text" id="epc_2" name="epc_2" value="{{ documento.epc_2 if documento else '' }}">
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="label-container">
-							<label for="epc_3" class="label-column">Ventilação / Exaustão:</label>
-						</div>
-					</td>
-					<td>
-						<div class="textbox">
-							<input type="text" id="epc_3" name="epc_3" value="{{ documento.epc_3 if documento else '' }}">
-						</div>
-					</td>
-				</tr>				
-				<tr>
-					<td>
-						<div class="label-container">
-							<label for="epc_4" class="label-column">LOTO:</label>
-						</div>
-					</td>
-					<td>
-						<div class="textbox">
-							<input type="text" id="epc_4" name="epc_4" value="{{ documento.epc_4 if documento else '' }}">
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="label-container">
-							<label for="epc_5" class="label-column">Medição quantitativa de agentes ambientais:</label>
-						</div>
-					</td>
-					<td>
-						<div class="textbox">
-							<input type="text" id="epc_5" name="epc_5" value="{{ documento.epc_5 if documento else '' }}">
-						</div>
-					</td>
-				</tr>				
-				<tr>
-					<td>
-						<div class="label-container">
-							<label for="outros_epc" class="label-column">Outros:</label>
-						</div>
-					</td>
-					<td>
-						<div class="textbox">
-							<input type="text" id="outros_epc" name="outros_epc" value="{{ documento.outros_epc if documento else '' }}">
-						</div>
-					</td>
-				</tr>
-			</table>
+            <table>            
+                <tr class="table-row">
+                    <td>
+                        <div class="label-container">
+                            <label for="epc_1" class="label-column">Linha de vida / Pontos de ancoragem / Sistema de resgate:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epc_1" name="epc_1" value="{{ documento.epc_1 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>                
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epc_2" class="label-column">Isolamento por cerquite / Guarda corpo / Tapume / Escora:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epc_2" name="epc_2" value="{{ documento.epc_2 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epc_3" class="label-column">Ventilação / Exaustão:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epc_3" name="epc_3" value="{{ documento.epc_3 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>                
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epc_4" class="label-column">LOTO:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epc_4" name="epc_4" value="{{ documento.epc_4 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="epc_5" class="label-column">Medição quantitativa de agentes ambientais:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="epc_5" name="epc_5" value="{{ documento.epc_5 if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>                
+                <tr>
+                    <td>
+                        <div class="label-container">
+                            <label for="outros_epc" class="label-column">Outros:</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="textbox">
+                            <input type="text" id="outros_epc" name="outros_epc" value="{{ documento.outros_epc if documento else '' }}">
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </fieldset>
 
         <input type="submit" value="Enviar">
     </form>
+
+    <script>
+        var documento = {% if documento %}{{ documento|tojson }}{% else %}null{% endif %};
+    </script>
+
 </body>
 
 </html>
