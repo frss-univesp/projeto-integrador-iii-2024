@@ -1,7 +1,8 @@
 import json
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from pymongo import MongoClient
 from datetime import datetime
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 title = "Sistema de emissão de PT"
@@ -25,11 +26,9 @@ def max_id(collection):
         return 1
 
 def get_certificacao(cert_id):
-    """Busca uma certificação pelo ID."""
     return coll_certificacoes.find_one({'_id': int(cert_id)})
 
 def get_distinct_certificacoes():
-    """Busca todas as certificações para o dropdown."""
     return coll_certificacoes.find()
 
 
@@ -43,6 +42,9 @@ def index():
 @app.route('/edit_pt/<pt>', methods=['GET', 'POST'])
 def edit_pt(pt=None):
     documento = coll_pt.find_one({'_id': int(pt)}) if pt else None
+
+    print(documento)
+
     return render_template('edit_pt.html', documento=documento)
 
 
@@ -58,7 +60,7 @@ def save_pt():
         nm_solicte = request.form.get("nm_solicte")
         area_solicte = request.form.get("area_solicte")
         ferram_utilz = request.form.get("ferram_utilz")
-        doc_ctrl_risc = request.form.get("ferram_utilz")
+        doc_ctrl_risc = request.form.get("doc_ctrl_risc")
         apontamento = request.form.get("apontamento")
         form_ctrl_13 = request.form.get("form_ctrl_13")
         form_ctrl_14 = request.form.get("form_ctrl_14")
@@ -83,6 +85,17 @@ def save_pt():
         nm_aprovador = request.form.get("nm_aprovador")
         cargo_aprovador = request.form.get("cargo_aprovador")
         dt_aprovacao = request.form.get("dt_aprovacao")
+        
+        executores_selecionados_json = request.form.get("executores_selecionados")
+
+        if not executores_selecionados_json:
+            executores_selecionados = []
+        else:
+            try:
+                executores_selecionados = json.loads(executores_selecionados_json)
+            except json.JSONDecodeError as e:
+                executores_selecionados = []
+        
         chk_item1 = True if request.form.get('chk_item1') == 'true' else False
         chk_item2 = True if request.form.get('chk_item2') == 'true' else False
         chk_item3 = True if request.form.get('chk_item3') == 'true' else False
@@ -155,7 +168,8 @@ def save_pt():
             'outros_epc': outros_epc,
             'nm_aprovador': nm_aprovador,
             'cargo_aprovador': cargo_aprovador,
-            'dt_aprovacao': dt_aprovacao
+            'dt_aprovacao': dt_aprovacao,
+            'executores': executores_selecionados
         }
 
         if nr_pt:
@@ -165,6 +179,70 @@ def save_pt():
             coll_pt.insert_one(doc_pt)
 
         return redirect(url_for('index'))
+    
+
+@app.route('/buscar_certificacoes', methods=['POST'])
+def buscar_certificacoes():
+
+    checkbox_data = request.json
+    query = {"$or": []}
+
+    for chk_key, is_checked in checkbox_data.items():
+        if is_checked:
+            query["$or"].append({chk_key: True})
+
+    if not query["$or"]:
+        return jsonify({"certificacoes": []})
+    
+    certificacoes = list(coll_certificacoes.find(query))
+    certificacoes_necessarias = {}
+
+    for cert in certificacoes:
+        nome_cert = cert["nome_certificacao"]
+        if nome_cert not in certificacoes_necessarias:
+            certificacoes_necessarias[nome_cert] = {
+                "id": cert.get("_id"),
+                "nome_certificacao": nome_cert
+            }
+
+    lista_certificacoes = list(certificacoes_necessarias.values())
+    return jsonify({"certificacoes": lista_certificacoes})
+
+
+@app.route('/buscar_executores_qualificados', methods=['POST'])
+def buscar_executores_qualificados():
+    
+    data = request.json
+    certificacoes_necessarias = data.get('certificacoes', [])    
+    certificacoes_ids = []
+
+    for cert_id in certificacoes_necessarias:
+
+        if isinstance(cert_id, str):
+            try:
+                certificacoes_ids.append(int(cert_id))
+            except ValueError:
+                try:
+                    certificacoes_ids.append(ObjectId(cert_id))
+                except:
+                    certificacoes_ids.append(cert_id)
+        else:
+            certificacoes_ids.append(cert_id)
+    
+    query = {
+        "certificacoes.id_cerficacao": {"$in": certificacoes_ids}
+    }
+    
+    executores = list(coll_executores.find(query))
+    
+    for executor in executores:
+        executor['_id'] = str(executor['_id'])
+        if 'certificacoes' in executor:
+            for cert in executor['certificacoes']:
+                if '_id' in cert:
+                    cert['_id'] = str(cert['_id'])
+    
+    return jsonify({'executores': executores})
 
 
 @app.route('/list_exec', methods=['GET'])
@@ -179,8 +257,6 @@ def edit_exec(executor=None):
     documento = coll_executores.find_one({'_id': int(executor)}) if executor else None
     lista_certificacoes = get_distinct_certificacoes()
 
-    print(documento)
-
     return render_template('edit_exec.html', documento=documento, lista_certificacoes=lista_certificacoes)
 
 
@@ -193,12 +269,9 @@ def save_exec():
         data_exclusao_str = request.form.get('data_exclusao')
         funcao = request.form.get('funcao')
         certificacoes_json = request.form.get('certificacoes_json')
-
-        # Convertendo strings de data para o formato adequado para MongoDB
         data_inclusao = data_inclusao_str if data_inclusao_str else None
         data_exclusao = data_exclusao_str if data_exclusao_str else None
 
-        # Agora certificacoes_json contém o array completo de objetos de certificação
         certificacoes = json.loads(certificacoes_json)
 
         doc_executor_base = {
@@ -212,10 +285,8 @@ def save_exec():
         if matricula_str:
             executor_existente = coll_executores.find_one({'_id': int(matricula_str)})
             if executor_existente and 'certificacoes' in executor_existente:
-                # Manter certificações existentes e adicionar novas
                 certificacoes_existentes = executor_existente['certificacoes']
-                
-                # Evitar duplicações baseadas no id_certificacao
+
                 certificacoes_ids_existentes = [cert.get('id_cerficacao') for cert in certificacoes_existentes 
                                             if isinstance(cert, dict) and 'id_cerficacao' in cert]
                 
