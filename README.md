@@ -60,14 +60,14 @@ Este projeto está licenciado sob os termos da licença MIT. Veja o arquivo [LIC
 
 Para mais informações sobre este projeto, entre em contato com os desenvolvedores:
 
-- **Diego Vergaças de Sousa Carvalho ** - [GitHub](https://github.com/diegovergacas)
-- **Erick William Costa Santos ** - [GitHub](https://github.com/_______)
+- **Diego Vergaças de Sousa Carvalho** - [GitHub](https://github.com/diegovergacas)
+- **Erick William Costa Santos** - [GitHub](https://github.com/_______)
 - **Francis Ronie Sa** - [GitHub](https://github.com/frss-univesp)
-- **Gláucio Alves Teixeira ** - [GitHub](https://github.com/_______)
+- **Gláucio Alves Teixeira** - [GitHub](https://github.com/_______)
 - **Marcio Yajiro Iwasa** - [GitHub](https://github.com/__________)
 - **Nicole Malachias Malachias** - [GitHub](https://github.com/_______)
-- **Thiago Artale Serdoz ** - [GitHub](https://github.com/_______)
-- **Vinicius Marques dos Santos ** - [GitHub](https://github.com/_______)
+- **Thiago Artale Serdoz** - [GitHub](https://github.com/_______)
+- **Vinicius Marques dos Santos** - [GitHub](https://github.com/_______)
 
 Você também pode acessar o repositório do projeto no GitHub: [frss-univesp/projeto-integrador-ii-2024](https://github.com/frss-univesp/projeto-integrador-iii-2024)
 
